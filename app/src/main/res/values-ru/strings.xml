@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name" translatable="false">Easy Learning</string>
+    <string name="title_text_view" translatable="false">Easy Learning For Childs</string>
+    <string name="teacher_mode">Режим учителя</string>
+    <string name="learning_mode">Режим ученика</string>
+    <string name="languages">Список языков</string>
+    <string name="add_lang">Добавить язык</string>
+    <string name="language">Язык</string>
+    <string name="add">Добавить</string>
+    <string name="cancel">Отменить</string>
+</resources>
