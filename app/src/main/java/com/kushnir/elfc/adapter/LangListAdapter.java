@@ -1,15 +1,12 @@
 package com.kushnir.elfc.adapter;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.kushnir.elfc.R;
@@ -30,7 +27,7 @@ public class LangListAdapter extends RecyclerView.Adapter<LangListAdapter.ViewHo
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = inflater.inflate(R.layout.lang_list_item, parent, false);
+        View view = inflater.inflate(R.layout.list_item_lang, parent, false);
 
         return new ViewHolder(view);
     }

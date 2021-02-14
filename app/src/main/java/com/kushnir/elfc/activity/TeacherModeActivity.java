@@ -1,18 +1,21 @@
 package com.kushnir.elfc.activity;
 
+import android.os.Bundle;
+import android.util.Log;
+import android.widget.Button;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.MotionEvent;
-import android.widget.Button;
-
 import com.kushnir.elfc.R;
 import com.kushnir.elfc.adapter.LangListAdapter;
+import com.kushnir.elfc.fragment.AddLangDialogFragment;
 import com.kushnir.elfc.pojo.LangListItem;
 
 import java.util.ArrayList;
@@ -47,8 +50,14 @@ public class TeacherModeActivity extends AppCompatActivity {
         langRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         langRecyclerView.setAdapter(adapter);
 
+        MutableLiveData<String> lang = new MutableLiveData<>();
+        lang.observe(this, s -> langsList.add(new LangListItem(s, v -> {
+            Log.i("ELFC", s);
+        })));
+
         addButton.setOnClickListener(view -> {
-            
+            AddLangDialogFragment dialog = new AddLangDialogFragment(lang);
+            dialog.show(getSupportFragmentManager(), "dialog_add_lang");
         });
     }
 }

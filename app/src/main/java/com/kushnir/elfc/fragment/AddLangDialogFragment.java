@@ -2,17 +2,26 @@ package com.kushnir.elfc.fragment;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+import androidx.lifecycle.MutableLiveData;
 
 import com.kushnir.elfc.R;
 
 public class AddLangDialogFragment extends DialogFragment {
+
+    private final MutableLiveData<String> item;
+
+    public AddLangDialogFragment(MutableLiveData<String> item) {
+        this.item = item;
+    }
+
+
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -20,7 +29,12 @@ public class AddLangDialogFragment extends DialogFragment {
         LayoutInflater inflater = requireActivity().getLayoutInflater();
 
         builder.setView(inflater.inflate(R.layout.dialog_add_lang, null))
-                .setPositiveButton(R.string.add, new DialogInterface())
-        return super.onCreateDialog(savedInstanceState);
+                .setPositiveButton(R.string.add, (dialog, which) -> {
+                    EditText text = getDialog().findViewById(R.id.dialog_lang_edit_text);
+                    item.postValue(text.getText().toString());
+                })
+                .setNegativeButton(R.string.cancel, (dialog, which) -> getDialog().cancel());
+
+        return builder.create();
     }
 }
