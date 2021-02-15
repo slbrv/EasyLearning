@@ -4,8 +4,8 @@ import android.view.View;
 
 public class LangListItem {
 
-    private String langName;
-    private View.OnClickListener listener;
+    private final String langName;
+    private final View.OnClickListener listener;
 
     public LangListItem(String langName, View.OnClickListener listener)
     {

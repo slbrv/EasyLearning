@@ -58,7 +58,7 @@ public class LangListAdapter extends RecyclerView.Adapter<LangListAdapter.ViewHo
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            langTextView = itemView.findViewById(R.id.lang_text_view);
+            langTextView = itemView.findViewById(R.id.subject_text_view);
         }
     }
 }
