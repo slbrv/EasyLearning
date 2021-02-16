@@ -13,4 +13,7 @@
     <string name="subject">Тема</string>
     <string name="cards_count">Количество карточек</string>
     <string name="subjects_count">Количество тем</string>
+    <string name="empty_lang_input_toast">Поле ввода языка не может быть пустым!</string>
+    <string name="empty_subject_input_toast">Поле ввода темы не может быть пустым!</string>
+
 </resources>

@@ -13,4 +13,6 @@
     <string name="subject">Subject</string>
     <string name="cards_count">Cards count</string>
     <string name="subjects_count">Subjects count</string>
+    <string name="empty_lang_input_toast">The language field cannot be empty!</string>
+    <string name="empty_subject_input_toast">The subject field cannot be empty!</string>
 </resources>

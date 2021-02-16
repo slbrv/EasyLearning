@@ -30,10 +30,10 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/teacher_mode_text_view" />
+        app:layout_constraintTop_toBottomOf="@+id/subjects_list_lang_text_view" />
 
     <TextView
-        android:id="@+id/teacher_mode_text_view"
+        android:id="@+id/subjects_list_lang_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"

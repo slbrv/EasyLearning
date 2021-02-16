@@ -2,7 +2,9 @@ package com.kushnir.elfc.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.MutableLiveData;
@@ -36,10 +38,21 @@ public class LangsListActivity extends AppCompatActivity {
         langRecyclerView.setAdapter(adapter);
 
         MutableLiveData<String> lang = new MutableLiveData<>();
-        lang.observe(this, s -> langs.add(new LangsListItem(s, 0, v -> {
-            Intent intent = new Intent(this, SubjectsListActivity.class);
-            startActivity(intent);
-        })));
+        lang.observe(this, s -> {
+            if(s.isEmpty()) {
+                Toast.makeText(
+                        this,
+                        getResources().getText(R.string.empty_lang_input_toast),
+                        Toast.LENGTH_LONG).show();
+            }
+            else {
+                langs.add(new LangsListItem(s, 0, v -> {
+                    Intent intent = new Intent(this, SubjectsListActivity.class);
+                    intent.putExtra("lang", s);
+                    startActivity(intent);
+                }));
+            }
+        });
 
         addButton.setOnClickListener(v -> {
             AddLangDialogFragment dialog = new AddLangDialogFragment(lang);
