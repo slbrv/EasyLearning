@@ -12,4 +12,5 @@
     <string name="add_subject">Add subject</string>
     <string name="subject">Subject</string>
     <string name="cards_count">Cards count</string>
+    <string name="subjects_count">Subjects count</string>
 </resources>

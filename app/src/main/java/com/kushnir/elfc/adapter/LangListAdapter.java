@@ -18,10 +18,12 @@ public class LangListAdapter extends RecyclerView.Adapter<LangListAdapter.ViewHo
 
     private final LayoutInflater inflater;
     private final List<LangsListItem> langs;
+    private final String subjectsCountText;
 
     public LangListAdapter(Context context, List<LangsListItem> langs) {
         this.inflater = LayoutInflater.from(context);
         this.langs = langs;
+        this.subjectsCountText = context.getResources().getString(R.string.subjects_count);
     }
 
     @NonNull
@@ -36,6 +38,7 @@ public class LangListAdapter extends RecyclerView.Adapter<LangListAdapter.ViewHo
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         LangsListItem item = langs.get(position);
         holder.langText.setText(item.getLangName());
+        holder.subjectsCountText.setText(subjectsCountText + ": " + item.getSubjectsCount());
         holder.langText.setOnClickListener(item.getListener());
     }
 
@@ -47,10 +50,12 @@ public class LangListAdapter extends RecyclerView.Adapter<LangListAdapter.ViewHo
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
         public final TextView langText;
+        public final TextView subjectsCountText;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             this.langText = itemView.findViewById(R.id.lang_text_view);
+            this.subjectsCountText = itemView.findViewById(R.id.subjects_count_text_view);
         }
     }
 }

@@ -36,7 +36,7 @@ public class LangsListActivity extends AppCompatActivity {
         langRecyclerView.setAdapter(adapter);
 
         MutableLiveData<String> lang = new MutableLiveData<>();
-        lang.observe(this, s -> langs.add(new LangsListItem(s, v -> {
+        lang.observe(this, s -> langs.add(new LangsListItem(s, 0, v -> {
             Intent intent = new Intent(this, SubjectsListActivity.class);
             startActivity(intent);
         })));

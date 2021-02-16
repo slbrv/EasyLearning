@@ -19,7 +19,7 @@ public class SubjectsListAdapter extends RecyclerView.Adapter<SubjectsListAdapte
 
     private final LayoutInflater inflater;
     private final List<SubjectsListItem> subjects;
-    private String cardsCountText;
+    private final String cardsCountText;
 
     public SubjectsListAdapter(Context context, List<SubjectsListItem> subjects) {
         this.inflater = LayoutInflater.from(context);
