@@ -10,16 +10,16 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.kushnir.elfc.R;
-import com.kushnir.elfc.pojo.LangListItem;
+import com.kushnir.elfc.pojo.LangsListItem;
 
 import java.util.List;
 
 public class LangListAdapter extends RecyclerView.Adapter<LangListAdapter.ViewHolder> {
 
     private final LayoutInflater inflater;
-    private final List<LangListItem> langs;
+    private final List<LangsListItem> langs;
 
-    public LangListAdapter(Context context, List<LangListItem> langs) {
+    public LangListAdapter(Context context, List<LangsListItem> langs) {
         this.inflater = LayoutInflater.from(context);
         this.langs = langs;
     }
@@ -34,11 +34,9 @@ public class LangListAdapter extends RecyclerView.Adapter<LangListAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        LangListItem item = langs.get(position);
-        String langText = item.getLangName();
-        View.OnClickListener listener = item.getListener();
-        holder.langTextView.setText(langText);
-        holder.langTextView.setOnClickListener(listener);
+        LangsListItem item = langs.get(position);
+        holder.langText.setText(item.getLangName());
+        holder.langText.setOnClickListener(item.getListener());
     }
 
     @Override
@@ -46,19 +44,13 @@ public class LangListAdapter extends RecyclerView.Adapter<LangListAdapter.ViewHo
         return langs.size();
     }
 
-    public void addLang(LangListItem item)
-    {
-        langs.add(item);
-        notifyDataSetChanged();
-    }
-
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        public final TextView langTextView;
+        public final TextView langText;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            langTextView = itemView.findViewById(R.id.subject_text_view);
+            this.langText = itemView.findViewById(R.id.lang_text_view);
         }
     }
 }
