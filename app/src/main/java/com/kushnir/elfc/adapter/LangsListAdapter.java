@@ -14,13 +14,13 @@ import com.kushnir.elfc.pojo.LangsListItem;
 
 import java.util.List;
 
-public class LangListAdapter extends RecyclerView.Adapter<LangListAdapter.ViewHolder> {
+public class LangsListAdapter extends RecyclerView.Adapter<LangsListAdapter.ViewHolder> {
 
     private final LayoutInflater inflater;
     private final List<LangsListItem> langs;
     private final String subjectsCountText;
 
-    public LangListAdapter(Context context, List<LangsListItem> langs) {
+    public LangsListAdapter(Context context, List<LangsListItem> langs) {
         this.inflater = LayoutInflater.from(context);
         this.langs = langs;
         this.subjectsCountText = context.getResources().getString(R.string.subjects_count);

@@ -15,4 +15,12 @@
     <string name="subjects_count">Subjects count</string>
     <string name="empty_lang_input_toast">The language field cannot be empty!</string>
     <string name="empty_subject_input_toast">The subject field cannot be empty!</string>
+    <string name="cards">Cards</string>
+    <string name="add_card">Add card</string>
+    <string name="empty_card_name_input_toast">The card name field cannot be empty!</string>
+    <string name="empty_card_transcription_input_toast">The card transcription field cannot be empty!</string>
+    <string name="empty_card_image_input_toast">The picture for the card is not set!</string>
+    <string name="word">Word</string>
+    <string name="transcription">Transcription</string>
+    <string name="card_image">Card image</string>
 </resources>

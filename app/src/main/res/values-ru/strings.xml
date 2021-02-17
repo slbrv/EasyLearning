@@ -13,7 +13,14 @@
     <string name="subject">Тема</string>
     <string name="cards_count">Количество карточек</string>
     <string name="subjects_count">Количество тем</string>
-    <string name="empty_lang_input_toast">Поле ввода языка не может быть пустым!</string>
-    <string name="empty_subject_input_toast">Поле ввода темы не может быть пустым!</string>
-
+    <string name="empty_lang_input_toast">Поле языка не может быть пустым!</string>
+    <string name="empty_subject_input_toast">Поле темы не может быть пустым!</string>
+    <string name="cards">Карточки</string>
+    <string name="add_card">Добавить карточку</string>
+    <string name="empty_card_name_input_toast">Поле названия карточки не может быть пустым!</string>
+    <string name="empty_card_transcription_input_toast">Поле транскрипции карточки не может быть пустым!</string>
+    <string name="empty_card_image_input_toast">Изображение для карточки не установлено!</string>
+    <string name="word">Слово</string>
+    <string name="transcription">Транскрипция</string>
+    <string name="card_image">Изображение карточки</string>
 </resources>
