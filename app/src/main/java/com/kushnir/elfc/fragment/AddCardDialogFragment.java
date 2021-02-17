@@ -1,13 +1,19 @@
 package com.kushnir.elfc.fragment;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,20 +23,21 @@ import androidx.lifecycle.MutableLiveData;
 import com.kushnir.elfc.R;
 import com.kushnir.elfc.pojo.CardsListItem;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+
 public class AddCardDialogFragment extends DialogFragment {
 
-    private static int RESULT_LOAD_IMG = 1;
+    private static final int RESULT_LOAD_IMG = 1;
 
-    private final MutableLiveData<String> word;
-    private final MutableLiveData<String> transcription;
-    private final MutableLiveData<Uri> icon;
+    private final MutableLiveData<CardsListItem> card;
 
-    public AddCardDialogFragment(MutableLiveData<String> word,
-                                 MutableLiveData<String> transcription,
-                                 MutableLiveData<Uri> icon) {
-        this.word = word;
-        this.transcription = transcription;
-        this.icon = icon;
+    private final MutableLiveData<Uri> imageUri;
+
+    public AddCardDialogFragment(MutableLiveData<CardsListItem> card) {
+        this.card = card;
+        this.imageUri = new MutableLiveData<>();
     }
 
     @NonNull
@@ -39,22 +46,51 @@ public class AddCardDialogFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = requireActivity().getLayoutInflater();
 
-        builder.setView(inflater.inflate(R.layout.dialog_add_card, null)).
-            setPositiveButton(R.string.add, (dialog, which) -> {
-                EditText cardWordEdit = getDialog().findViewById(R.id.dialog_card_word_edit_text);
-                EditText cardTranscriptionEdit =
-                        getDialog().findViewById(R.id.dialog_card_transcription_edit_text);
-                ImageView cardImageView = getDialog().findViewById(R.id.dialog_card_image_view);
-                cardImageView.setOnClickListener(v -> {
-                    Intent photoIntent = new Intent(Intent.ACTION_PICK);
-                    photoIntent.setType("image/*");
-                    startActivityForResult(photoIntent, RESULT_LOAD_IMG);
-                });
+        View view = inflater.inflate(R.layout.dialog_add_card, null);
 
-//                CardsListItem item = new CardsListItem(
-//                        cardWordEdit.getText().toString(),
-//                        cardTranscriptionEdit.getText().toString(), );
-            });
+        EditText cardWordEdit = view.findViewById(R.id.dialog_card_word_edit_text);
+        EditText cardTranscriptionEdit =
+                view.findViewById(R.id.dialog_card_transcription_edit_text);
+        ImageView cardImageView = view.findViewById(R.id.dialog_card_image_view);
+        cardImageView.setOnClickListener(v -> {
+            Intent photoIntent = new Intent(Intent.ACTION_PICK);
+            photoIntent.setType("image/*");
+            getActivity().startActivityForResult(photoIntent, RESULT_LOAD_IMG);
+        });
+
+        imageUri.observe(this, uri -> {
+            try {
+                final InputStream stream = getContext().getContentResolver().openInputStream(imageUri.getValue());
+                final Bitmap bitmap = BitmapFactory.decodeStream(stream);
+                cardImageView.setImageBitmap(bitmap);
+                stream.close();
+            } catch (FileNotFoundException e) {
+                Log.e("APP", "Error while loading image");
+                Toast.makeText(getContext(),
+                        getResources().getString(R.string.something_went_wrong),
+                        Toast.LENGTH_LONG).show();
+                e.printStackTrace();
+            } catch (IOException e) {
+                Log.e("APP", "Error while closing stream");
+                e.printStackTrace();
+            }
+        });
+
+        builder.setView(view).
+            setPositiveButton(R.string.add, (dialog, which) -> {
+                Intent photoIntent = new Intent(Intent.ACTION_PICK);
+                photoIntent.setType("image/*");
+                getActivity().startActivityForResult(photoIntent, RESULT_LOAD_IMG);
+
+                CardsListItem item = new CardsListItem(
+                        cardWordEdit.getText().toString(),
+                        cardTranscriptionEdit.getText().toString(),
+                        imageUri.getValue());
+                card.postValue(item);
+            }).
+            setNegativeButton(R.string.cancel, (dialog, which) -> {
+                dialog.cancel();
+            }).show();
 
         return super.onCreateDialog(savedInstanceState);
     }
@@ -62,17 +98,19 @@ public class AddCardDialogFragment extends DialogFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+        if(resultCode == Activity.RESULT_OK) {
+            switch (requestCode) {
+                case RESULT_LOAD_IMG:
+                    final Uri selected = data.getData();
+                    imageUri.postValue(selected);
+                    break;
+                default:
+            }
+        }
     }
 
-    public MutableLiveData<String> getWord() {
-        return word;
-    }
-
-    public MutableLiveData<String> getTranscription() {
-        return transcription;
-    }
-
-    public MutableLiveData<Uri> getIcon() {
-        return icon;
+    public MutableLiveData<CardsListItem> getCard() {
+        return card;
     }
 }

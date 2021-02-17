@@ -33,6 +33,7 @@ public class SubjectsListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_subjects_list);
+
         Intent intent = getIntent();
 
         TextView langTextView = findViewById(R.id.subjects_list_lang_text_view);
@@ -52,6 +53,9 @@ public class SubjectsListActivity extends AppCompatActivity {
             } else {
                 subjects.add(new SubjectsListItem(s, 0, v -> {
                     Log.i("App", "Subject: " + s);
+                    Intent toCardsIntent = new Intent(this, CardsListActivity.class);
+                    toCardsIntent.putExtra("subject", s);
+                    startActivity(toCardsIntent);
                 }));
             }
         });

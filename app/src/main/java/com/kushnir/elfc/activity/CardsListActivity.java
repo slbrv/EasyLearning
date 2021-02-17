@@ -1,5 +1,6 @@
 package com.kushnir.elfc.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.kushnir.elfc.R;
 import com.kushnir.elfc.adapter.CardsListAdapter;
+import com.kushnir.elfc.fragment.AddCardDialogFragment;
 import com.kushnir.elfc.pojo.CardsListItem;
 
 import java.util.ArrayList;
@@ -30,9 +32,12 @@ public class CardsListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cards_list);
 
+        Intent intent = getIntent();
+
         addButton = findViewById(R.id.add_card_button);
         cardsRecyclerView = findViewById(R.id.cards_recycler_view);
-        subjectNameTextView = findViewById(R.id.subject_name_text_view);
+        subjectNameTextView = findViewById(R.id.subject_title_text_view);
+        subjectNameTextView.setText(intent.getStringExtra("subject"));
 
         cards = new ArrayList<>();
 
@@ -49,7 +54,7 @@ public class CardsListActivity extends AppCompatActivity {
                 makeToast(getResources().getString(R.string.empty_card_name_input_toast));
             } else if(c.getTranscription().isEmpty()) {
                 makeToast(getResources().getString(R.string.empty_card_transcription_input_toast));
-            } else if(c.getImageUri().getPath().isEmpty()) {
+            } else if(c.getImageUri() == null) {
                 makeToast(getResources().getString(R.string.empty_card_image_input_toast));
             } else {
                 cards.add(c);
@@ -57,7 +62,8 @@ public class CardsListActivity extends AppCompatActivity {
         });
 
         addButton.setOnClickListener(v -> {
-
+            AddCardDialogFragment dialog = new AddCardDialogFragment(card);
+            dialog.show(getSupportFragmentManager(), "dialog_add_card");
         });
     }
 

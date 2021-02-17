@@ -8,15 +8,18 @@ public class CardsListItem {
     private final String word;
     private final String transcription;
     private final Uri imageUri;
-    private final View.OnClickListener listener;
+    private View.OnClickListener listener;
 
     public CardsListItem(String word,
                          String transcription,
-                         Uri imageUri,
-                         View.OnClickListener listener) {
+                         Uri imageUri) {
         this.word = word;
         this.transcription = transcription;
         this.imageUri = imageUri;
+        this.listener = null;
+    }
+
+    public void setListener(View.OnClickListener listener) {
         this.listener = listener;
     }
 

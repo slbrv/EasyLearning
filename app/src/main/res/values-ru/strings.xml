@@ -23,4 +23,5 @@
     <string name="word">Слово</string>
     <string name="transcription">Транскрипция</string>
     <string name="card_image">Изображение карточки</string>
+    <string name="something_went_wrong">Что-то пошло не так</string>
 </resources>
