@@ -5,18 +5,33 @@ import android.view.View;
 
 public class CardsListItem {
 
-    private final String word;
-    private final String transcription;
-    private final Uri imageUri;
+    private String word;
+    private String transcription;
+    private Uri imageUri;
     private View.OnClickListener listener;
 
-    public CardsListItem(String word,
-                         String transcription,
-                         Uri imageUri) {
+    public CardsListItem() {
+
+    }
+
+    public CardsListItem(CardsListItem item) {
+        this.word = item.word;
+        this.transcription = item.transcription;
+        this.imageUri = item.imageUri;
+        this.listener = item.listener;
+    }
+
+
+    public void setWord(String word) {
         this.word = word;
+    }
+
+    public void setTranscription(String transcription) {
         this.transcription = transcription;
-        this.imageUri = imageUri;
-        this.listener = null;
+    }
+
+    public void setImageUri(Uri uri) {
+        this.imageUri = uri;
     }
 
     public void setListener(View.OnClickListener listener) {

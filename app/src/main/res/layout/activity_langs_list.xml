@@ -22,27 +22,11 @@
         android:id="@+id/langs_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="600dp"
+        android:layout_marginTop="16dp"
         android:fontFamily="serif"
         android:text="@string/languages"
         android:textColor="#334DDC"
         android:textSize="22sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/subjects_list_lang_text_view" />
-
-    <TextView
-        android:id="@+id/subjects_list_lang_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="40dp"
-        android:fontFamily="serif"
-        android:text="@string/teacher_mode"
-        android:textColor="#334DDC"
-        android:textSize="28sp"
-        app:layout_constraintBottom_toTopOf="@+id/langs_text_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

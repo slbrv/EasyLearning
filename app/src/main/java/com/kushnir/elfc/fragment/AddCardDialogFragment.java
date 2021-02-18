@@ -21,6 +21,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.MutableLiveData;
 
 import com.kushnir.elfc.R;
+import com.kushnir.elfc.activity.CardsListActivity;
 import com.kushnir.elfc.pojo.CardsListItem;
 
 import java.io.FileNotFoundException;
@@ -29,15 +30,12 @@ import java.io.InputStream;
 
 public class AddCardDialogFragment extends DialogFragment {
 
-    private static final int RESULT_LOAD_IMG = 1;
 
-    private final MutableLiveData<CardsListItem> card;
 
-    private final MutableLiveData<Uri> imageUri;
+    private final MutableLiveData<CardsListActivity.RawCard> card;
 
-    public AddCardDialogFragment(MutableLiveData<CardsListItem> card) {
+    public AddCardDialogFragment(MutableLiveData<CardsListActivity.RawCard> card) {
         this.card = card;
-        this.imageUri = new MutableLiveData<>();
     }
 
     @NonNull
@@ -51,41 +49,14 @@ public class AddCardDialogFragment extends DialogFragment {
         EditText cardWordEdit = view.findViewById(R.id.dialog_card_word_edit_text);
         EditText cardTranscriptionEdit =
                 view.findViewById(R.id.dialog_card_transcription_edit_text);
-        ImageView cardImageView = view.findViewById(R.id.dialog_card_image_view);
-        cardImageView.setOnClickListener(v -> {
-            Intent photoIntent = new Intent(Intent.ACTION_PICK);
-            photoIntent.setType("image/*");
-            getActivity().startActivityForResult(photoIntent, RESULT_LOAD_IMG);
-        });
 
-        imageUri.observe(this, uri -> {
-            try {
-                final InputStream stream = getContext().getContentResolver().openInputStream(imageUri.getValue());
-                final Bitmap bitmap = BitmapFactory.decodeStream(stream);
-                cardImageView.setImageBitmap(bitmap);
-                stream.close();
-            } catch (FileNotFoundException e) {
-                Log.e("APP", "Error while loading image");
-                Toast.makeText(getContext(),
-                        getResources().getString(R.string.something_went_wrong),
-                        Toast.LENGTH_LONG).show();
-                e.printStackTrace();
-            } catch (IOException e) {
-                Log.e("APP", "Error while closing stream");
-                e.printStackTrace();
-            }
-        });
 
         builder.setView(view).
             setPositiveButton(R.string.add, (dialog, which) -> {
-                Intent photoIntent = new Intent(Intent.ACTION_PICK);
-                photoIntent.setType("image/*");
-                getActivity().startActivityForResult(photoIntent, RESULT_LOAD_IMG);
 
-                CardsListItem item = new CardsListItem(
-                        cardWordEdit.getText().toString(),
-                        cardTranscriptionEdit.getText().toString(),
-                        imageUri.getValue());
+                CardsListActivity.RawCard item = new CardsListActivity.RawCard();
+                item.word = cardWordEdit.getText().toString();
+                item.transcription = cardTranscriptionEdit.getText().toString();
                 card.postValue(item);
             }).
             setNegativeButton(R.string.cancel, (dialog, which) -> {
@@ -95,22 +66,7 @@ public class AddCardDialogFragment extends DialogFragment {
         return super.onCreateDialog(savedInstanceState);
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if(resultCode == Activity.RESULT_OK) {
-            switch (requestCode) {
-                case RESULT_LOAD_IMG:
-                    final Uri selected = data.getData();
-                    imageUri.postValue(selected);
-                    break;
-                default:
-            }
-        }
-    }
-
-    public MutableLiveData<CardsListItem> getCard() {
+    public MutableLiveData<CardsListActivity.RawCard> getCard() {
         return card;
     }
 }

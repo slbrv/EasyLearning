@@ -43,6 +43,11 @@ public class CardsListAdapter extends RecyclerView.Adapter<CardsListAdapter.View
         holder.layout.setOnClickListener(item.getListener());
     }
 
+    public void setData(ArrayList<CardsListItem> items) {
+        this.cards = items;
+        notifyDataSetChanged();
+    }
+
     @Override
     public int getItemCount() {
         return cards.size();

@@ -3,10 +3,12 @@ package com.kushnir.elfc.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -36,8 +38,9 @@ public class SubjectsListActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
 
-        TextView langTextView = findViewById(R.id.subjects_list_lang_text_view);
-        langTextView.setText(intent.getStringExtra("lang"));
+        ActionBar bar = getSupportActionBar();
+        bar.setTitle(intent.getStringExtra("lang"));
+        bar.setDisplayHomeAsUpEnabled(true);
 
         subjects = new ArrayList<>();
 
@@ -69,5 +72,16 @@ public class SubjectsListActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.subjects_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(new SubjectsListAdapter(this, subjects));
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

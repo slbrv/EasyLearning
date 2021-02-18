@@ -2,9 +2,11 @@ package com.kushnir.elfc.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.Toast;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -27,6 +29,10 @@ public class LangsListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_langs_list);
+
+        ActionBar bar = getSupportActionBar();
+        bar.setTitle(R.string.teacher_mode);
+        bar.setDisplayHomeAsUpEnabled(true);
 
         langs = new ArrayList<>();
         LangsListAdapter adapter = new LangsListAdapter(this, langs);
@@ -57,5 +63,16 @@ public class LangsListActivity extends AppCompatActivity {
             AddLangDialogFragment dialog = new AddLangDialogFragment(lang);
             dialog.show(getSupportFragmentManager(), "dialog_add_lang");
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }
