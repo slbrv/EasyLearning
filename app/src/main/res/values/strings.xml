@@ -24,4 +24,7 @@
     <string name="transcription">Transcription</string>
     <string name="card_image">Card image</string>
     <string name="something_went_wrong">Something went wrong</string>
+    <string name="lang_has_already_been_added">The language has already been added</string>
+    <string name="subject_has_already_been_added">The subject has already been added</string>
+    <string name="word_has_already_been_added">The word has already been added</string>
 </resources>

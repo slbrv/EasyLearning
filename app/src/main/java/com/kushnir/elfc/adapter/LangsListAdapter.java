@@ -10,17 +10,17 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.kushnir.elfc.R;
-import com.kushnir.elfc.pojo.LangsListItem;
+import com.kushnir.elfc.pojo.LangListItem;
 
 import java.util.List;
 
 public class LangsListAdapter extends RecyclerView.Adapter<LangsListAdapter.ViewHolder> {
 
     private final LayoutInflater inflater;
-    private final List<LangsListItem> langs;
+    private final List<LangListItem> langs;
     private final String subjectsCountText;
 
-    public LangsListAdapter(Context context, List<LangsListItem> langs) {
+    public LangsListAdapter(Context context, List<LangListItem> langs) {
         this.inflater = LayoutInflater.from(context);
         this.langs = langs;
         this.subjectsCountText = context.getResources().getString(R.string.subjects_count);
@@ -36,7 +36,7 @@ public class LangsListAdapter extends RecyclerView.Adapter<LangsListAdapter.View
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        LangsListItem item = langs.get(position);
+        LangListItem item = langs.get(position);
         holder.langText.setText(item.getLangName());
         holder.subjectsCountText.setText(subjectsCountText + ": " + item.getSubjectsCount());
         holder.langText.setOnClickListener(item.getListener());

@@ -2,13 +2,13 @@ package com.kushnir.elfc.pojo;
 
 import android.view.View;
 
-public class LangsListItem {
+public class LangListItem {
 
     private final String langName;
     private final int subjectsCount;
     private final View.OnClickListener listener;
 
-    public LangsListItem(String langName, int subjectsCount, View.OnClickListener listener)
+    public LangListItem(String langName, int subjectsCount, View.OnClickListener listener)
     {
         this.langName = langName;
         this.subjectsCount = subjectsCount;

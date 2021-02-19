@@ -2,6 +2,7 @@ package com.kushnir.elfc.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.Toast;
@@ -14,8 +15,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.kushnir.elfc.R;
 import com.kushnir.elfc.adapter.LangsListAdapter;
+import com.kushnir.elfc.data.CardsRepository;
 import com.kushnir.elfc.fragment.AddLangDialogFragment;
-import com.kushnir.elfc.pojo.LangsListItem;
+import com.kushnir.elfc.pojo.LangListItem;
 
 import java.util.ArrayList;
 
@@ -23,7 +25,7 @@ public class LangsListActivity extends AppCompatActivity {
 
     private Button addButton;
     private RecyclerView langRecyclerView;
-    private ArrayList<LangsListItem> langs;
+    private ArrayList<LangListItem> langs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +36,19 @@ public class LangsListActivity extends AppCompatActivity {
         bar.setTitle(R.string.teacher_mode);
         bar.setDisplayHomeAsUpEnabled(true);
 
+        CardsRepository db = new CardsRepository(getBaseContext());
+        db.dropCards();
+        db.createCards();
+        ArrayList<String> langStrings = db.getLangs();
         langs = new ArrayList<>();
+        for(String lang : langStrings) {
+            LangListItem item = new LangListItem(lang, db.getSubjectCount(lang), v -> {
+                Intent intent = new Intent(this, SubjectsListActivity.class);
+                intent.putExtra("lang", lang);
+                startActivity(intent);
+            });
+            langs.add(item);
+        }
         LangsListAdapter adapter = new LangsListAdapter(this, langs);
 
         addButton = findViewById(R.id.add_lang_button);
@@ -51,11 +65,18 @@ public class LangsListActivity extends AppCompatActivity {
                         Toast.LENGTH_LONG).show();
             }
             else {
-                langs.add(new LangsListItem(s, 0, v -> {
-                    Intent intent = new Intent(this, SubjectsListActivity.class);
-                    intent.putExtra("lang", s);
-                    startActivity(intent);
-                }));
+                Log.i("APP", "INSERT");
+                if(db.insertLang(s)) {
+                    langs.add(new LangListItem(s, 0, v -> {
+                        Intent intent = new Intent(this, SubjectsListActivity.class);
+                        intent.putExtra("lang", s);
+                        startActivity(intent);
+                    }));
+                } else {
+                    Toast.makeText(getBaseContext(),
+                            R.string.lang_has_already_been_added,
+                            Toast.LENGTH_SHORT).show();
+                }
             }
         });
 

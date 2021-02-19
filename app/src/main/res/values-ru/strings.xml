@@ -24,4 +24,7 @@
     <string name="transcription">Транскрипция</string>
     <string name="card_image">Изображение карточки</string>
     <string name="something_went_wrong">Что-то пошло не так</string>
+    <string name="lang_has_already_been_added">Язык уже добавлен</string>
+    <string name="subject_has_already_been_added">Тема уже добавлена</string>
+    <string name="word_has_already_been_added">Слово уже добавлено</string>
 </resources>

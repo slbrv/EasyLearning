@@ -1,19 +1,11 @@
 package com.kushnir.elfc.fragment;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,19 +14,13 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.kushnir.elfc.R;
 import com.kushnir.elfc.activity.CardsListActivity;
-import com.kushnir.elfc.pojo.CardsListItem;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import com.kushnir.elfc.pojo.CardInfo;
 
 public class AddCardDialogFragment extends DialogFragment {
 
+    private final MutableLiveData<CardInfo> card;
 
-
-    private final MutableLiveData<CardsListActivity.RawCard> card;
-
-    public AddCardDialogFragment(MutableLiveData<CardsListActivity.RawCard> card) {
+    public AddCardDialogFragment(MutableLiveData<CardInfo> card) {
         this.card = card;
     }
 
@@ -53,10 +39,9 @@ public class AddCardDialogFragment extends DialogFragment {
 
         builder.setView(view).
             setPositiveButton(R.string.add, (dialog, which) -> {
-
-                CardsListActivity.RawCard item = new CardsListActivity.RawCard();
-                item.word = cardWordEdit.getText().toString();
-                item.transcription = cardTranscriptionEdit.getText().toString();
+                CardInfo item = new CardInfo();
+                item.setWord(cardWordEdit.getText().toString());
+                item.setTranscription(cardTranscriptionEdit.getText().toString());
                 card.postValue(item);
             }).
             setNegativeButton(R.string.cancel, (dialog, which) -> {
@@ -66,7 +51,7 @@ public class AddCardDialogFragment extends DialogFragment {
         return super.onCreateDialog(savedInstanceState);
     }
 
-    public MutableLiveData<CardsListActivity.RawCard> getCard() {
+    public MutableLiveData<CardInfo> getCard() {
         return card;
     }
 }

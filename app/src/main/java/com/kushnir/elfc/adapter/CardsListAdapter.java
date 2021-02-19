@@ -1,6 +1,7 @@
 package com.kushnir.elfc.adapter;
 
 import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,16 +13,16 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.kushnir.elfc.R;
-import com.kushnir.elfc.pojo.CardsListItem;
+import com.kushnir.elfc.pojo.CardListItem;
 
 import java.util.ArrayList;
 
 public class CardsListAdapter extends RecyclerView.Adapter<CardsListAdapter.ViewHolder> {
 
     private LayoutInflater inflater;
-    private ArrayList<CardsListItem> cards;
+    private ArrayList<CardListItem> cards;
 
-    public CardsListAdapter(Context context, ArrayList<CardsListItem> cards) {
+    public CardsListAdapter(Context context, ArrayList<CardListItem> cards) {
         this.inflater = LayoutInflater.from(context);
         this.cards = cards;
     }
@@ -36,14 +37,14 @@ public class CardsListAdapter extends RecyclerView.Adapter<CardsListAdapter.View
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        CardsListItem item = cards.get(position);
-        holder.cardName.setText(item.getWord());
-        holder.cardTranscription.setText(item.getTranscription());
-        holder.cardImage.setImageURI(item.getImageUri());
+        CardListItem item = cards.get(position);
+        holder.cardName.setText(item.getInfo().getWord());
+        holder.cardTranscription.setText(item.getInfo().getTranscription());
+        holder.cardImage.setImageURI(Uri.parse(item.getInfo().getImageUri()));
         holder.layout.setOnClickListener(item.getListener());
     }
 
-    public void setData(ArrayList<CardsListItem> items) {
+    public void setData(ArrayList<CardListItem> items) {
         this.cards = items;
         notifyDataSetChanged();
     }

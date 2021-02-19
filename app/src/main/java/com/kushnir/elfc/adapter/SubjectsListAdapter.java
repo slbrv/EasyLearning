@@ -1,7 +1,6 @@
 package com.kushnir.elfc.adapter;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,17 +10,17 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.kushnir.elfc.R;
-import com.kushnir.elfc.pojo.SubjectsListItem;
+import com.kushnir.elfc.pojo.SubjectListItem;
 
 import java.util.List;
 
 public class SubjectsListAdapter extends RecyclerView.Adapter<SubjectsListAdapter.ViewHolder> {
 
     private final LayoutInflater inflater;
-    private final List<SubjectsListItem> subjects;
+    private final List<SubjectListItem> subjects;
     private final String cardsCountText;
 
-    public SubjectsListAdapter(Context context, List<SubjectsListItem> subjects) {
+    public SubjectsListAdapter(Context context, List<SubjectListItem> subjects) {
         this.inflater = LayoutInflater.from(context);
         this.subjects = subjects;
         this.cardsCountText = context.getResources().getString(R.string.cards_count);
@@ -37,7 +36,7 @@ public class SubjectsListAdapter extends RecyclerView.Adapter<SubjectsListAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        SubjectsListItem item = subjects.get(position);
+        SubjectListItem item = subjects.get(position);
         holder.subjectName.setText(item.getSubjectName());
         holder.cardsCountText.setText(cardsCountText + ": " + item.getCardsCount());
         holder.subjectName.setOnClickListener(item.getListener());

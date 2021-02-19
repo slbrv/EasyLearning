@@ -2,8 +2,11 @@ package com.kushnir.elfc.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Button;
@@ -14,22 +17,22 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.MutableLiveData;
+import androidx.loader.content.CursorLoader;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.kushnir.elfc.R;
 import com.kushnir.elfc.adapter.CardsListAdapter;
+import com.kushnir.elfc.data.CardsRepository;
 import com.kushnir.elfc.fragment.AddCardDialogFragment;
-import com.kushnir.elfc.pojo.CardsListItem;
+import com.kushnir.elfc.pojo.CardInfo;
+import com.kushnir.elfc.pojo.CardListItem;
 
+import java.io.FileDescriptor;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 public class CardsListActivity extends AppCompatActivity {
-
-    public static class RawCard {
-        public String word;
-        public String transcription;
-    }
 
     private static final int RESULT_LOAD_IMG = 1;
 
@@ -37,9 +40,14 @@ public class CardsListActivity extends AppCompatActivity {
     private RecyclerView cardsRecyclerView;
     private TextView subjectNameTextView;
 
-    private ArrayList<CardsListItem> cards;
+    private ArrayList<CardListItem> cards;
 
-    private MutableLiveData<Uri> imageUri;
+    private String lang;
+    private String subject;
+    private String word;
+    private String tsp;
+
+    private CardsRepository db;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -47,55 +55,48 @@ public class CardsListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_cards_list);
 
         Intent intent = getIntent();
+        lang = intent.getStringExtra("lang");
+        subject = intent.getStringExtra("subject");
+
         ActionBar bar = getSupportActionBar();
-        bar.setTitle(intent.getStringExtra("subject"));
+        bar.setTitle(subject);
         bar.setDisplayHomeAsUpEnabled(true);
 
         addButton = findViewById(R.id.add_card_button);
         cardsRecyclerView = findViewById(R.id.cards_recycler_view);
 
+        db = new CardsRepository(this);
+
         cards = new ArrayList<>();
+        ArrayList<CardInfo> cardInfo = db.getCards(lang, subject);
+        for(CardInfo info : cardInfo) {
+            cards.add(new CardListItem(info, v -> {
+                Log.i("APP", "Word: " + info.getWord());
+            }));
+        }
 
-        imageUri = new MutableLiveData<>();
 
-        //
-        // Cards loading from DB
-        //
         CardsListAdapter adapter = new CardsListAdapter(this, cards);
         cardsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         cardsRecyclerView.setAdapter(adapter);
 
-        CardsListItem item = new CardsListItem();
+        CardListItem item = new CardListItem();
 
-        MutableLiveData<RawCard> card = new MutableLiveData<>();
+        MutableLiveData<CardInfo> card = new MutableLiveData<>();
         card.observe(this, c -> {
-            if(c.word.isEmpty()) {
+            if(c.getWord().isEmpty()) {
                 makeToast(getResources().getString(R.string.empty_card_name_input_toast));
-            } else if(c.transcription.isEmpty()) {
+            } else if(c.getTranscription().isEmpty()) {
                 makeToast(getResources().getString(R.string.empty_card_transcription_input_toast));
             } else {
-                item.setWord(c.word);
-                item.setTranscription(c.transcription);
-                Log.i("APP", "Set word: " + c.word);
+                Log.i("APP", "Set word: " + c.getWord());
 
-                Intent photoIntent = new Intent(Intent.ACTION_PICK);
-                photoIntent.setType("image/*");
+                Intent photoIntent = new Intent(
+                        Intent.ACTION_PICK,
+                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                word = c.getWord();
+                tsp = c.getTranscription();
                 startActivityForResult(photoIntent, RESULT_LOAD_IMG);
-            }
-        });
-
-        imageUri.observe(this, uri -> {
-            if(imageUri == null) {
-                makeToast(getResources().getString(R.string.empty_card_image_input_toast));
-            } else {
-                item.setImageUri(uri);
-                item.setListener(v -> {
-                    Log.i("APP", "Word: " + item.getWord());
-                });
-                Log.i("APP", "OK");
-                CardsListItem temp = new CardsListItem(item);
-                cards.add(temp);
-                adapter.setData(cards);
             }
         });
 
@@ -113,7 +114,20 @@ public class CardsListActivity extends AppCompatActivity {
             switch (requestCode) {
                 case RESULT_LOAD_IMG:
                     final Uri selected = data.getData();
-                    imageUri.postValue(selected);
+
+                    Log.i("APP", "Path: " + selected.toString());
+                    String uri = selected.toString();
+                    CardInfo info = new CardInfo(word, tsp, uri);
+                    CardListItem item = new CardListItem(info, v -> {
+                        Log.i("APP", "Word: " + word);
+                    });
+                    if(db.insertCard(lang, subject, info))
+                        cards.add(item);
+                    else
+                        Toast.makeText(
+                                this,
+                                R.string.word_has_already_been_added,
+                                Toast.LENGTH_LONG).show();
                     break;
                 default:
             }
