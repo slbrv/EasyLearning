@@ -1,6 +1,5 @@
 package com.kushnir.elfc.pojo;
 
-import android.net.Uri;
 import android.view.View;
 
 public class CardListItem {
@@ -38,4 +37,5 @@ public class CardListItem {
     public View.OnClickListener getListener() {
         return listener;
     }
+
 }

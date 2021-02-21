@@ -1,21 +1,23 @@
 package com.kushnir.elfc.pojo;
 
+import android.graphics.Bitmap;
+
 public class CardInfo {
 
     private String word;
     private String transcription;
-    private String imageUri;
+    private Bitmap image;
 
     public CardInfo() {
         this.word = "";
         this.transcription = "";
-        this.imageUri = "";
+        this.image = null;
     }
 
-    public CardInfo(String word, String transcription, String imageUri) {
+    public CardInfo(String word, String transcription, Bitmap image) {
         this.word = word;
         this.transcription = transcription;
-        this.imageUri = imageUri;
+        this.image = image;
     }
 
     public void setWord(String word) {
@@ -26,8 +28,8 @@ public class CardInfo {
         this.transcription = transcription;
     }
 
-    public void setImageUri(String imageUri) {
-        this.imageUri = imageUri;
+    public void setImage(Bitmap image) {
+        this.image = image;
     }
 
     public String getWord() {
@@ -38,7 +40,7 @@ public class CardInfo {
         return transcription;
     }
 
-    public String getImageUri() {
-        return imageUri;
+    public Bitmap getImage() {
+        return image;
     }
 }

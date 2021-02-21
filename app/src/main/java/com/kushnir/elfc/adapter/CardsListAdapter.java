@@ -1,6 +1,7 @@
 package com.kushnir.elfc.adapter;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.kushnir.elfc.R;
+import com.kushnir.elfc.data.CardsRepository;
 import com.kushnir.elfc.pojo.CardListItem;
 
 import java.util.ArrayList;
@@ -40,13 +42,8 @@ public class CardsListAdapter extends RecyclerView.Adapter<CardsListAdapter.View
         CardListItem item = cards.get(position);
         holder.cardName.setText(item.getInfo().getWord());
         holder.cardTranscription.setText(item.getInfo().getTranscription());
-        holder.cardImage.setImageURI(Uri.parse(item.getInfo().getImageUri()));
+        holder.cardImage.setImageBitmap(item.getInfo().getImage());
         holder.layout.setOnClickListener(item.getListener());
-    }
-
-    public void setData(ArrayList<CardListItem> items) {
-        this.cards = items;
-        notifyDataSetChanged();
     }
 
     @Override
