@@ -3,6 +3,7 @@ package com.kushnir.elfc.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
@@ -30,8 +31,10 @@ import com.kushnir.elfc.pojo.CardListItem;
 
 import java.io.FileDescriptor;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 
+//TODO Improve this in the future using ItemTouchHelper
 public class CardsListActivity extends AppCompatActivity {
 
     private static final int RESULT_LOAD_IMG = 1;
@@ -113,22 +116,34 @@ public class CardsListActivity extends AppCompatActivity {
         if(resultCode == Activity.RESULT_OK) {
             switch (requestCode) {
                 case RESULT_LOAD_IMG:
-                    final Uri selected = data.getData();
+                    final Uri uri = data.getData();
 
-                    Log.i("APP", "Path: " + selected.toString());
-                    String uri = selected.toString();
-                    CardInfo info = new CardInfo(word, tsp, uri);
-                    CardListItem item = new CardListItem(info, v -> {
-                        Log.i("APP", "Word: " + word);
-                    });
-                    if(db.insertCard(lang, subject, info))
-                        cards.add(item);
-                    else
-                        Toast.makeText(
-                                this,
-                                R.string.word_has_already_been_added,
-                                Toast.LENGTH_LONG).show();
-                    break;
+                    try {
+                        Bitmap image = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
+                        CardsRepository db = new CardsRepository(this);
+                        Bitmap scaled = Bitmap.createScaledBitmap(image, 256, 256, false);
+                        String path = lang + "_" + subject + "_" + word;
+                        if(db.insertImage(path, scaled)) {
+                            CardInfo info = new CardInfo(word, tsp, path);
+                            CardListItem item = new CardListItem(info, v -> {
+                                Log.i("APP", "Word: " + word);
+                            });
+                            if (db.insertCard(lang, subject, info))
+                                cards.add(item);
+                            else
+                                Toast.makeText(
+                                        this,
+                                        R.string.word_has_already_been_added,
+                                        Toast.LENGTH_LONG).show();
+                            break;
+                        }
+                        else {
+                            Log.e("APP", "Word: " + word + " wasn't created (image insert error)");
+                        }
+                        db.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 default:
             }
         }

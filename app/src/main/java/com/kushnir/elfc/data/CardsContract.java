@@ -26,4 +26,10 @@ public class CardsContract {
         public static final String COLUMN_NAME_TRANSCRIPTION = "transcription";
         public static final String COLUMN_NAME_IMAGE_URI = "image_uri";
     }
+
+    public static class ImageEntry implements BaseColumns {
+        public static final String TABLE_NAME = "images";
+        public static final String COLUMN_NAME_IMAGE_NAME = "image_name";
+        public static final String COLUMN_NAME_IMAGE_DATA = "image_data";
+    }
 }

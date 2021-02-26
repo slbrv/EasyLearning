@@ -37,8 +37,8 @@ public class LangsListActivity extends AppCompatActivity {
         bar.setDisplayHomeAsUpEnabled(true);
 
         CardsRepository db = new CardsRepository(getBaseContext());
-        db.dropCards();
-        db.createCards();
+        //db.dropCards();
+        //db.createCards();
         ArrayList<String> langStrings = db.getLangs();
         langs = new ArrayList<>();
         for(String lang : langStrings) {

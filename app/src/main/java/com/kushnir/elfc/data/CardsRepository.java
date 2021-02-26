@@ -1,15 +1,19 @@
 package com.kushnir.elfc.data;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
 
 import com.kushnir.elfc.pojo.CardInfo;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
 public class CardsRepository extends SQLiteOpenHelper {
@@ -40,6 +44,12 @@ public class CardsRepository extends SQLiteOpenHelper {
                     "FOREIGN KEY(" + CardsContract.CardEntry.COLUMN_NAME_SUBJECT_ID + ") REFERENCES " +
                     CardsContract.SubjectEntry.TABLE_NAME + "(" + CardsContract.SubjectEntry._ID + "))";
 
+    public static final String SQL_CREATE_IMAGE_ENTRIES =
+            "CREATE TABLE IF NOT EXISTS " + CardsContract.ImageEntry.TABLE_NAME + " (" +
+                    CardsContract.ImageEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    CardsContract.ImageEntry.COLUMN_NAME_IMAGE_NAME + " TEXT, " +
+                    CardsContract.ImageEntry.COLUMN_NAME_IMAGE_DATA + " BLOB)";
+
     public CardsRepository(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -49,14 +59,18 @@ public class CardsRepository extends SQLiteOpenHelper {
         Log.i("APP", "SQL LANG: " + SQL_CREATE_LANG_ENTRIES);
         Log.i("APP", "SQL SUBJECT: " + SQL_CREATE_SUBJECT_ENTRIES);
         Log.i("APP", "SQL CARD: " + SQL_CREATE_CARD_ENTRIES);
+        Log.i("APP", "SQL CARD: " + SQL_CREATE_IMAGE_ENTRIES);
 
         db.execSQL(SQL_CREATE_LANG_ENTRIES);
         db.execSQL(SQL_CREATE_SUBJECT_ENTRIES);
         db.execSQL(SQL_CREATE_CARD_ENTRIES);
+        db.execSQL(SQL_CREATE_IMAGE_ENTRIES);
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+    public void onUpgrade(SQLiteDatabase db,
+                          int oldVersion,
+                          int newVersion) {
 
     }
 
@@ -76,7 +90,8 @@ public class CardsRepository extends SQLiteOpenHelper {
         return id;
     }
 
-    public int getSubjectId(String lang, String subject) {
+    public int getSubjectId(String lang,
+                            String subject) {
         int langId = getLangId(lang);
 
         SQLiteDatabase db = getReadableDatabase();
@@ -109,7 +124,8 @@ public class CardsRepository extends SQLiteOpenHelper {
         return count;
     }
 
-    public int getCardCount(String lang, String subject) {
+    public int getCardCount(String lang,
+                            String subject) {
         int id = getSubjectId(lang, subject);
 
         SQLiteDatabase db = getReadableDatabase();
@@ -147,7 +163,8 @@ public class CardsRepository extends SQLiteOpenHelper {
         return true;
     }
 
-    public boolean insertSubject(String lang, String subject) {
+    public boolean insertSubject(String lang,
+                                 String subject) {
         int id = getLangId(lang);
 
         SQLiteDatabase db = getReadableDatabase();
@@ -200,11 +217,26 @@ public class CardsRepository extends SQLiteOpenHelper {
                 CardsContract.CardEntry.COLUMN_NAME_IMAGE_URI + ") VALUES(" + id +
                 ", '" + info.getWord() +
                 "', '" + info.getTranscription() +
-                "', '" + info.getImageUri() + "')";
+                "', '" + info.getImagePath() + "')";
         Log.i("APP", "Card insert: " + sqlQuery);
         db.execSQL(sqlQuery);
         db.close();
 
+        return true;
+    }
+
+    public boolean insertImage(String name,
+                               Bitmap image) {
+        SQLiteDatabase db = getWritableDatabase();
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+        byte[] bitmapBytes = stream.toByteArray();
+
+        ContentValues values = new ContentValues();
+        values.put(CardsContract.ImageEntry.COLUMN_NAME_IMAGE_NAME, name);
+        values.put(CardsContract.ImageEntry.COLUMN_NAME_IMAGE_DATA, bitmapBytes);
+        db.insert(CardsContract.ImageEntry.TABLE_NAME, null, values);
+        db.close();
         return true;
     }
 
@@ -262,6 +294,21 @@ public class CardsRepository extends SQLiteOpenHelper {
         db.close();
 
         return items;
+    }
+
+    public Bitmap getImage(String name) {
+        SQLiteDatabase db = getReadableDatabase();
+        String getImageSql = "SELECT * FROM " + CardsContract.ImageEntry.TABLE_NAME +
+                " WHERE " + CardsContract.ImageEntry.COLUMN_NAME_IMAGE_NAME + " = '" + name + "'";
+        Cursor query = db.rawQuery(getImageSql, null);
+        Bitmap image = null;
+        while(query.moveToNext()) {
+            byte[] imageBytes = query.getBlob(2);
+            image = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+        }
+        query.close();
+        db.close();
+        return image;
     }
 
     public void dropTables() {

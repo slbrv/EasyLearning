@@ -23,10 +23,12 @@ public class CardsListAdapter extends RecyclerView.Adapter<CardsListAdapter.View
 
     private LayoutInflater inflater;
     private ArrayList<CardListItem> cards;
+    private Context context;
 
     public CardsListAdapter(Context context, ArrayList<CardListItem> cards) {
         this.inflater = LayoutInflater.from(context);
         this.cards = cards;
+        this.context = context;
     }
 
     @NonNull
@@ -40,9 +42,10 @@ public class CardsListAdapter extends RecyclerView.Adapter<CardsListAdapter.View
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         CardListItem item = cards.get(position);
+        CardsRepository db = new CardsRepository(context);
         holder.cardName.setText(item.getInfo().getWord());
         holder.cardTranscription.setText(item.getInfo().getTranscription());
-        holder.cardImage.setImageBitmap(item.getInfo().getImage());
+        holder.cardImage.setImageBitmap(db.getImage(item.getInfo().getImagePath()));
         holder.layout.setOnClickListener(item.getListener());
     }
 
