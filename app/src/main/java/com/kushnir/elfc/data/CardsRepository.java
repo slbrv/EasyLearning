@@ -311,6 +311,63 @@ public class CardsRepository extends SQLiteOpenHelper {
         return image;
     }
 
+    public boolean delLang(String lang) {
+        int langId = getLangId(lang);
+        if(langId == -1)
+            return false;
+
+        ArrayList<String> subjects = getSubjects(lang);
+        for(String subject : subjects) {
+            if(!delSubject(lang, subject))
+                return false;
+        }
+
+        SQLiteDatabase db = getWritableDatabase();
+
+        String delLangSql = "DELETE FROM " + CardsContract.LangEntry.TABLE_NAME + " WHERE " +
+                CardsContract.LangEntry.COLUMN_NAME_LANG + " = '" + lang + "'";
+        db.execSQL(delLangSql);
+        db.close();
+
+        return true;
+    }
+
+    public boolean delSubject(String lang, String subject) {
+        int langId = getLangId(lang);
+        int subjectId = getSubjectId(lang, subject);
+        if(langId == -1 || subjectId == -1)
+            return false;
+
+        SQLiteDatabase db = getWritableDatabase();
+
+        String delCardsSql = "DELETE FROM " + CardsContract.CardEntry.TABLE_NAME + " WHERE " +
+                CardsContract.CardEntry.COLUMN_NAME_SUBJECT_ID + " = " + subjectId;
+        db.execSQL(delCardsSql);
+
+        String delSubjectSql = "DELETE FROM " + CardsContract.SubjectEntry.TABLE_NAME + " WHERE " +
+                CardsContract.SubjectEntry.COLUMN_NAME_LANG_ID + " = " + langId + " AND " +
+                CardsContract.SubjectEntry.COLUMN_NAME_SUBJECT + " = '" + subject + "'";
+        db.execSQL(delSubjectSql);
+        db.close();
+
+        return true;
+    }
+
+    public boolean delCard(String lang, String subject, String word) {
+        int subjectId = getSubjectId(lang, subject);
+        if(subjectId == -1)
+            return false;
+
+        SQLiteDatabase db = getWritableDatabase();
+        String delCardSql = "DELETE FROM " + CardsContract.CardEntry.TABLE_NAME + " WHERE " +
+                CardsContract.CardEntry.COLUMN_NAME_SUBJECT_ID + " = " + subjectId + " AND " +
+                CardsContract.CardEntry.COLUMN_NAME_WORD + " = '" + word + "'";
+        db.execSQL(delCardSql);
+        db.close();
+
+        return true;
+    }
+
     public void dropTables() {
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL("DROP TABLE langs");
