@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.LangsListActivity">
+    tools:context=".activity.LangListActivity">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/langs_recycler_view"

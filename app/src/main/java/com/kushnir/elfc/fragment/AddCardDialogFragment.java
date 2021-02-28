@@ -13,7 +13,6 @@ import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.MutableLiveData;
 
 import com.kushnir.elfc.R;
-import com.kushnir.elfc.activity.CardsListActivity;
 import com.kushnir.elfc.pojo.CardInfo;
 
 public class AddCardDialogFragment extends DialogFragment {

@@ -1,8 +1,6 @@
 package com.kushnir.elfc.adapter;
 
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.kushnir.elfc.R;
 import com.kushnir.elfc.data.CardsRepository;
-import com.kushnir.elfc.pojo.CardListItem;
+import com.kushnir.elfc.adapter.item.CardListItem;
 
 import java.util.ArrayList;
 
@@ -46,7 +44,8 @@ public class CardsListAdapter extends RecyclerView.Adapter<CardsListAdapter.View
         holder.cardName.setText(item.getInfo().getWord());
         holder.cardTranscription.setText(item.getInfo().getTranscription());
         holder.cardImage.setImageBitmap(db.getImage(item.getInfo().getImagePath()));
-        holder.layout.setOnClickListener(item.getListener());
+        holder.delButton.setOnClickListener(item.getDelListener());
+        holder.layout.setOnClickListener(item.getClickListener());
     }
 
     @Override
@@ -59,6 +58,7 @@ public class CardsListAdapter extends RecyclerView.Adapter<CardsListAdapter.View
         public final TextView cardName;
         public final TextView cardTranscription;
         public final ImageView cardImage;
+        public final ImageView delButton;
         public final LinearLayout layout;
 
         public ViewHolder(@NonNull View itemView) {
@@ -67,6 +67,7 @@ public class CardsListAdapter extends RecyclerView.Adapter<CardsListAdapter.View
             this.cardName = itemView.findViewById(R.id.card_list_name_text_view);
             this.cardTranscription = itemView.findViewById(R.id.card_list_transcription_text_view);
             this.cardImage = itemView.findViewById(R.id.card_list_image_view);
+            this.delButton = itemView.findViewById(R.id.card_list_delete_button);
             this.layout = itemView.findViewById(R.id.card_list_layout);
         }
     }

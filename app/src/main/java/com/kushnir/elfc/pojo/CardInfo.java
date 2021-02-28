@@ -4,6 +4,7 @@ public class CardInfo {
 
     private String word;
     private String transcription;
+    // lang_subject_word
     private String imagePath;
 
     public CardInfo() {

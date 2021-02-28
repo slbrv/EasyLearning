@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     protected void toTeacherMode(View v) {
-        Intent intent = new Intent(this, LangsListActivity.class);
+        Intent intent = new Intent(this, LangListActivity.class);
         startActivity(intent);
     }
 

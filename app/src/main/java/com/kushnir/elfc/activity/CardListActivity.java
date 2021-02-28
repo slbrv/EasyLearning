@@ -2,11 +2,9 @@ package com.kushnir.elfc.activity;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.MenuItem;
@@ -18,7 +16,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.MutableLiveData;
-import androidx.loader.content.CursorLoader;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -27,21 +24,18 @@ import com.kushnir.elfc.adapter.CardsListAdapter;
 import com.kushnir.elfc.data.CardsRepository;
 import com.kushnir.elfc.fragment.AddCardDialogFragment;
 import com.kushnir.elfc.pojo.CardInfo;
-import com.kushnir.elfc.pojo.CardListItem;
+import com.kushnir.elfc.adapter.item.CardListItem;
 
-import java.io.FileDescriptor;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 
 //TODO Improve this in the future using ItemTouchHelper
-public class CardsListActivity extends AppCompatActivity {
+public class CardListActivity extends AppCompatActivity {
 
     private static final int RESULT_LOAD_IMG = 1;
 
     private Button addButton;
     private RecyclerView cardsRecyclerView;
-    private TextView subjectNameTextView;
 
     private ArrayList<CardListItem> cards;
 
@@ -51,6 +45,8 @@ public class CardsListActivity extends AppCompatActivity {
     private String tsp;
 
     private CardsRepository db;
+
+    private CardsListAdapter adapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -75,15 +71,26 @@ public class CardsListActivity extends AppCompatActivity {
         for(CardInfo info : cardInfo) {
             cards.add(new CardListItem(info, v -> {
                 Log.i("APP", "Word: " + info.getWord());
+            }, v -> {
+                for(int i = 0; i < cards.size(); ++i) {
+                    CardListItem it = cards.get(i);
+                    if(it.getInfo().getWord().equals(info.getWord())) {
+                        CardsRepository repo = new CardsRepository(this);
+                        repo.delCard(lang, subject, info.getWord());
+                        repo.close();
+                        cards.remove(i);
+                        adapter.notifyDataSetChanged();
+                        break;
+                    }
+                }
+                Log.i("APP", "Word: " + word + " was deleted!");
             }));
         }
 
 
-        CardsListAdapter adapter = new CardsListAdapter(this, cards);
+        adapter = new CardsListAdapter(this, cards);
         cardsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         cardsRecyclerView.setAdapter(adapter);
-
-        CardListItem item = new CardListItem();
 
         MutableLiveData<CardInfo> card = new MutableLiveData<>();
         card.observe(this, c -> {
@@ -127,9 +134,24 @@ public class CardsListActivity extends AppCompatActivity {
                             CardInfo info = new CardInfo(word, tsp, path);
                             CardListItem item = new CardListItem(info, v -> {
                                 Log.i("APP", "Word: " + word);
+                            }, v -> {
+                                for(int i = 0; i < cards.size(); ++i) {
+                                    CardListItem it = cards.get(i);
+                                    if(it.getInfo().getWord().equals(info.getWord())) {
+                                        CardsRepository repo = new CardsRepository(this);
+                                        repo.delCard(lang, subject, info.getWord());
+                                        repo.close();
+                                        cards.remove(i);
+                                        adapter.notifyDataSetChanged();
+                                        Log.i("APP", "Word: " + word + " was deleted!");
+                                        break;
+                                    }
+                                }
                             });
-                            if (db.insertCard(lang, subject, info))
+                            if (db.insertCard(lang, subject, info)) {
                                 cards.add(item);
+                                adapter.notifyDataSetChanged();
+                            }
                             else
                                 Toast.makeText(
                                         this,

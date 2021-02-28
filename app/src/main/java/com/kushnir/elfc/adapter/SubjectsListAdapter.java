@@ -4,13 +4,15 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.kushnir.elfc.R;
-import com.kushnir.elfc.pojo.SubjectListItem;
+import com.kushnir.elfc.adapter.item.SubjectListItem;
 
 import java.util.List;
 
@@ -39,7 +41,8 @@ public class SubjectsListAdapter extends RecyclerView.Adapter<SubjectsListAdapte
         SubjectListItem item = subjects.get(position);
         holder.subjectName.setText(item.getSubjectName());
         holder.cardsCountText.setText(cardsCountText + ": " + item.getCardsCount());
-        holder.subjectName.setOnClickListener(item.getListener());
+        holder.delButton.setOnClickListener(item.getDelListener());
+        holder.layout.setOnClickListener(item.getClickListener());
     }
 
     @Override
@@ -51,11 +54,15 @@ public class SubjectsListAdapter extends RecyclerView.Adapter<SubjectsListAdapte
 
         public final TextView subjectName;
         public final TextView cardsCountText;
+        public final ImageView delButton;
+        public final LinearLayout layout;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             this.subjectName = itemView.findViewById(R.id.subject_name_text_view);
             this.cardsCountText = itemView.findViewById(R.id.cards_count_text_view);
+            this.delButton = itemView.findViewById(R.id.subject_list_delete_button);
+            this.layout = itemView.findViewById(R.id.subject_list_layout);
         }
     }
 }

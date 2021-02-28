@@ -338,7 +338,14 @@ public class CardsRepository extends SQLiteOpenHelper {
         if(langId == -1 || subjectId == -1)
             return false;
 
+        ArrayList<CardInfo> cards = getCards(lang, subject);
         SQLiteDatabase db = getWritableDatabase();
+        for(CardInfo card : cards) {
+            String imageName = lang + "_" + subject + "_" + card.getWord();
+            String delImageSql = "DELETE FROM " + CardsContract.ImageEntry.TABLE_NAME + " WHERE " +
+                    CardsContract.ImageEntry.COLUMN_NAME_IMAGE_NAME + " = '" + imageName + "'";
+            db.execSQL(delImageSql);
+        }
 
         String delCardsSql = "DELETE FROM " + CardsContract.CardEntry.TABLE_NAME + " WHERE " +
                 CardsContract.CardEntry.COLUMN_NAME_SUBJECT_ID + " = " + subjectId;
@@ -363,6 +370,11 @@ public class CardsRepository extends SQLiteOpenHelper {
                 CardsContract.CardEntry.COLUMN_NAME_SUBJECT_ID + " = " + subjectId + " AND " +
                 CardsContract.CardEntry.COLUMN_NAME_WORD + " = '" + word + "'";
         db.execSQL(delCardSql);
+
+        String imageName = lang + "_" + subject + "_" + word;
+        String delImageSql = "DELETE FROM " + CardsContract.ImageEntry.TABLE_NAME + " WHERE " +
+                CardsContract.ImageEntry.COLUMN_NAME_IMAGE_NAME + " = '" + imageName + "'";
+        db.execSQL(delImageSql);
         db.close();
 
         return true;

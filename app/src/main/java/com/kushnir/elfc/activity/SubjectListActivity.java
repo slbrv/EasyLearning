@@ -17,19 +17,17 @@ import com.kushnir.elfc.R;
 import com.kushnir.elfc.adapter.SubjectsListAdapter;
 import com.kushnir.elfc.data.CardsRepository;
 import com.kushnir.elfc.fragment.AddSubjectDialogFragment;
-import com.kushnir.elfc.pojo.SubjectListItem;
+import com.kushnir.elfc.adapter.item.SubjectListItem;
 
 import java.util.ArrayList;
 
-public class SubjectsListActivity extends AppCompatActivity {
+public class SubjectListActivity extends AppCompatActivity {
 
     private ArrayList<SubjectListItem> subjects;
     private Button addButton;
     private RecyclerView recyclerView;
 
-    public SubjectsListActivity() {
-
-    }
+    private SubjectsListAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,30 +47,57 @@ public class SubjectsListActivity extends AppCompatActivity {
         subjects = new ArrayList<>();
         for(String subject : subjectStrings) {
             SubjectListItem item = new SubjectListItem(subject,
+                    lang,
                     db.getCardCount(lang, subject), v -> {
-                Intent toCardsIntent = new Intent(this, CardsListActivity.class);
+                Intent toCardsIntent = new Intent(this, CardListActivity.class);
                 toCardsIntent.putExtra("lang", lang);
                 toCardsIntent.putExtra("subject", subject);
                 startActivity(toCardsIntent);
+            }, v -> {
+                for (int i = 0; i < subjects.size(); i++) {
+                    SubjectListItem it = subjects.get(i);
+                    if(it.getSubjectName().equals(subject)) {
+                        CardsRepository repo = new CardsRepository(this);
+                        repo.delSubject(lang, subject);
+                        repo.close();
+                        subjects.remove(it);
+                        adapter.notifyDataSetChanged();
+                        Log.i("APP", "Delete subject: " + subject);
+                        break;
+                    }
+                }
             });
             subjects.add(item);
         }
 
-        MutableLiveData<String> subject = new MutableLiveData<>();
-        subject.observe(this, s -> {
-            if (s.isEmpty()) {
+        MutableLiveData<String> subjectLiveData = new MutableLiveData<>();
+        subjectLiveData.observe(this, subject -> {
+            if (subject.isEmpty()) {
                 Toast.makeText(
                         this,
                         getResources().getText(R.string.empty_subject_input_toast),
                         Toast.LENGTH_LONG).show();
             } else {
-                if(db.insertSubject(lang, s)) {
-                    subjects.add(new SubjectListItem(s, 0, v -> {
-                        Log.i("App", "Subject: " + s);
-                        Intent toCardsIntent = new Intent(this, CardsListActivity.class);
+                if(db.insertSubject(lang, subject)) {
+                    subjects.add(new SubjectListItem(subject, lang,0, v -> {
+                        Log.i("App", "Subject: " + subject);
+                        Intent toCardsIntent = new Intent(this, CardListActivity.class);
                         toCardsIntent.putExtra("lang", lang);
-                        toCardsIntent.putExtra("subject", s);
+                        toCardsIntent.putExtra("subject", subject);
                         startActivity(toCardsIntent);
+                    }, v -> {
+                        for (int i = 0; i < subjects.size(); i++) {
+                            SubjectListItem it = subjects.get(i);
+                            if(it.getSubjectName().equals(subject)) {
+                                CardsRepository repo = new CardsRepository(this);
+                                repo.delSubject(lang, subject);
+                                repo.close();
+                                subjects.remove(it);
+                                adapter.notifyDataSetChanged();
+                                Log.i("APP", "Delete subject: " + subject);
+                                break;
+                            }
+                        }
                     }));
                 } else {
                     Toast.makeText(
@@ -85,13 +110,26 @@ public class SubjectsListActivity extends AppCompatActivity {
 
         addButton = findViewById(R.id.add_subject_button);
         addButton.setOnClickListener(v -> {
-            AddSubjectDialogFragment dialog = new AddSubjectDialogFragment(subject);
+            AddSubjectDialogFragment dialog = new AddSubjectDialogFragment(subjectLiveData);
             dialog.show(getSupportFragmentManager(), "dialog_add_subject");
         });
 
+        adapter = new SubjectsListAdapter(this, subjects);
+
         recyclerView = findViewById(R.id.subjects_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new SubjectsListAdapter(this, subjects));
+        recyclerView.setAdapter(adapter);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        CardsRepository repo = new CardsRepository(this);
+        for(SubjectListItem item : subjects) {
+            item.setCardsCount(repo.getCardCount(item.getLang(), item.getSubjectName()));
+        }
+        adapter.notifyDataSetChanged();
+        repo.close();
     }
 
     @Override
