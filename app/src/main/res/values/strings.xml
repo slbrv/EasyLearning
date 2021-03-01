@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name" translatable="false">Easy Learning</string>
     <string name="title_text_view" translatable="false">Let`s learn the words!</string>
+    <string name="ok" translatable="false">OK</string>
     <string name="teacher_mode">Teacher mode</string>
     <string name="learning_mode">Learning mode</string>
     <string name="languages">Languages</string>
@@ -31,4 +32,9 @@
     <string name="learning">Learning mode</string>
     <string name="word_mode">Word mode</string>
     <string name="image_mode">Image mode</string>
+    <string name="remembered">Remembered</string>
+    <string name="to_repeat">To repeat</string>
+    <string name="great">Great!</string>
+    <string name="learned_words">Learned words</string>
+    <string name="repetitions_count">Repetitions count</string>
 </resources>

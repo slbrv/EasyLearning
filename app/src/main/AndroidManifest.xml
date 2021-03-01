@@ -11,8 +11,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.EasyLearning">
+        <activity android:name=".activity.LearningActivity"></activity>
         <activity android:name=".activity.LangListActivity" />
-        <activity android:name=".activity.SubjectListActivity"/>
+        <activity android:name=".activity.SubjectListActivity" />
         <activity android:name=".activity.CardListActivity" />
         <activity android:name=".activity.MainActivity">
             <intent-filter>

@@ -55,9 +55,13 @@ public class SubjectListActivity extends AppCompatActivity {
         ArrayList<String> subjectStrings = db.getSubjects(lang);
         subjects = new ArrayList<>();
         for(String subject : subjectStrings) {
+            int cardCount = db.getCardCount(lang, subject);
+            if(mode == ActivityMode.STUDENT_MODE && cardCount <= 0)
+                continue;
+
             SubjectListItem item = new SubjectListItem(subject,
                     lang,
-                    db.getCardCount(lang, subject), v -> {
+                    cardCount, v -> {
                 switch (mode) {
                     case TEACHER_MODE:
                         Intent toCardsIntent = new Intent(this, CardListActivity.class);
@@ -188,6 +192,10 @@ public class SubjectListActivity extends AppCompatActivity {
                 case 0:
                     // Learning mode
                     Log.i("APP", "To learning mode: lang(" + lang + ") subject(" + subject + ")");
+                    Intent intent = new Intent(this, LearningActivity.class);
+                    intent.putExtra("lang", lang);
+                    intent.putExtra("subject", subject);
+                    startActivity(intent);
                     break;
                 case 1:
                     // Word mode

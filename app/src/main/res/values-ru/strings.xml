@@ -31,4 +31,9 @@
     <string name="learning">Изучение</string>
     <string name="word_mode">Тестирование по словам</string>
     <string name="image_mode">Тестирование по картинкам</string>
+    <string name="remembered">Запомнено</string>
+    <string name="to_repeat">Для повторения</string>
+    <string name="great">Отлично!</string>
+    <string name="learned_words">Выучено слов</string>
+    <string name="repetitions_count">Количество повторений</string>
 </resources>
