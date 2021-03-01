@@ -63,7 +63,7 @@ public class LearningActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        showStatistics();
+        showStatisticsDialog();
     }
 
     private ArrayList<CardInfo> loadCards(String lang, String subject) {
@@ -87,7 +87,7 @@ public class LearningActivity extends AppCompatActivity {
         ++remCount;
         ++currentCard;
         if(currentCard >= cards.size())
-            showStatistics();
+            showStatisticsDialog();
         else
             inflateCardToView(currentCard);
     }
@@ -99,7 +99,7 @@ public class LearningActivity extends AppCompatActivity {
         inflateCardToView(++currentCard);
     }
 
-    private void showStatistics() {
+    private void showStatisticsDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         Resources resources = getResources();
         builder.setTitle(resources.getString(R.string.great));
@@ -107,9 +107,8 @@ public class LearningActivity extends AppCompatActivity {
         String repeatedWords = resources.getString(R.string.repetitions_count) + ": " + repCount;
         String message = learnedWords + "\n" + repeatedWords;
         builder.setMessage(message);
-        builder.setPositiveButton(resources.getString(R.string.ok), (d, v) -> {
-            finish();
-        });
+        builder.setPositiveButton(resources.getString(R.string.ok), (d, v) -> finish());
+        builder.setOnDismissListener((d) -> finish());
         AlertDialog dialog = builder.create();
         dialog.show();
     }

@@ -138,9 +138,11 @@ public class LangListActivity extends AppCompatActivity {
                     dialog.show(getSupportFragmentManager(), "dialog_add_lang");
                 });
                 addButton.setVisibility(View.VISIBLE);
+                bar.setTitle(R.string.teacher_mode);
                 break;
             case STUDENT_MODE:
                 addButton.setVisibility(View.GONE);
+                bar.setTitle(R.string.learning_mode);
                 break;
         }
     }

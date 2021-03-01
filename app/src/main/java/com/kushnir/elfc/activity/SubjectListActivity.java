@@ -56,7 +56,9 @@ public class SubjectListActivity extends AppCompatActivity {
         subjects = new ArrayList<>();
         for(String subject : subjectStrings) {
             int cardCount = db.getCardCount(lang, subject);
-            if(mode == ActivityMode.STUDENT_MODE && cardCount <= 0)
+
+            // There must be at least 3 cards to display in the testing activity!
+            if(mode == ActivityMode.STUDENT_MODE && cardCount < 3)
                 continue;
 
             SubjectListItem item = new SubjectListItem(subject,
@@ -189,21 +191,26 @@ public class SubjectListActivity extends AppCompatActivity {
                          res.getString(R.string.image_mode)};
         builder.setItems(mods, (dialog, which) -> {
             switch (which) {
-                case 0:
-                    // Learning mode
+                case 0: // Learning mode
                     Log.i("APP", "To learning mode: lang(" + lang + ") subject(" + subject + ")");
-                    Intent intent = new Intent(this, LearningActivity.class);
-                    intent.putExtra("lang", lang);
-                    intent.putExtra("subject", subject);
-                    startActivity(intent);
+                    Intent learningIntent = new Intent(this, LearningActivity.class);
+                    learningIntent.putExtra("lang", lang);
+                    learningIntent.putExtra("subject", subject);
+                    startActivity(learningIntent);
                     break;
-                case 1:
-                    // Word mode
+                case 1: // Word mode
                     Log.i("APP", "To word mode: lang(" + lang + ") subject(" + subject + ")");
+                    Intent wordIntent = new Intent(this, TestingWordsActivity.class);
+                    wordIntent.putExtra("lang", lang);
+                    wordIntent.putExtra("subject", subject);
+                    startActivity(wordIntent);
                     break;
-                case 2:
-                    // Image mode
+                case 2: // Image mode
                     Log.i("APP", "To image mode: lang(" + lang + ") subject(" + subject + ")");
+                    Intent imageIntent = new Intent(this, TestingImageActivity.class);
+                    imageIntent.putExtra("lang", lang);
+                    imageIntent.putExtra("subject", subject);
+                    startActivity(imageIntent);
                     break;
             }
         });

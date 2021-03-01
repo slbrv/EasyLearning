@@ -36,4 +36,9 @@
     <string name="great">Отлично!</string>
     <string name="learned_words">Выучено слов</string>
     <string name="repetitions_count">Количество повторений</string>
+    <string name="warning">Внимание</string>
+    <string name="test_get_back_message">Вы уверены, что хотите выйти? Тест будет завершен!</string>
+    <string name="test_completed">Тест выполнен</string>
+    <string name="number_of_cards">Количество карточек</string>
+    <string name="correct_answers">Правильных ответов</string>
 </resources>
