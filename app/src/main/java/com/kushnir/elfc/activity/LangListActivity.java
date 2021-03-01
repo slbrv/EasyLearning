@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -15,9 +16,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.kushnir.elfc.R;
 import com.kushnir.elfc.adapter.LangListAdapter;
+import com.kushnir.elfc.adapter.item.LangListItem;
 import com.kushnir.elfc.data.CardsRepository;
 import com.kushnir.elfc.fragment.AddLangDialogFragment;
-import com.kushnir.elfc.adapter.item.LangListItem;
 
 import java.util.ArrayList;
 
@@ -29,6 +30,8 @@ public class LangListActivity extends AppCompatActivity {
 
     private LangListAdapter adapter;
 
+    private ActivityMode mode;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,14 +41,27 @@ public class LangListActivity extends AppCompatActivity {
         bar.setTitle(R.string.teacher_mode);
         bar.setDisplayHomeAsUpEnabled(true);
 
+        Intent intent = getIntent();
+        mode = intent.getIntExtra("mode", -1) == 0 ?
+                ActivityMode.TEACHER_MODE :
+                ActivityMode.STUDENT_MODE;
+
         CardsRepository db = new CardsRepository(getBaseContext());
         ArrayList<String> langStrings = db.getLangs();
         langs = new ArrayList<>();
         for(String lang : langStrings) {
             LangListItem item = new LangListItem(lang, db.getSubjectCount(lang), v -> {
-                Intent intent = new Intent(this, SubjectListActivity.class);
-                intent.putExtra("lang", lang);
-                startActivity(intent);
+                Intent toSub = new Intent(this, SubjectListActivity.class);
+                switch(mode) {
+                    case TEACHER_MODE:
+                        toSub.putExtra("mode", 0);
+                        break;
+                    case STUDENT_MODE:
+                        toSub.putExtra("mode", 1);
+                        break;
+                }
+                toSub.putExtra("lang", lang);
+                startActivity(toSub);
             }, v -> {
                 for (int i = 0; i < langs.size(); i++) {
                     LangListItem it = langs.get(i);
@@ -62,9 +78,8 @@ public class LangListActivity extends AppCompatActivity {
             });
             langs.add(item);
         }
-        adapter = new LangListAdapter(this, langs);
+        adapter = new LangListAdapter(this, langs, mode);
 
-        addButton = findViewById(R.id.add_lang_button);
         langRecyclerView = findViewById(R.id.langs_recycler_view);
         langRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         langRecyclerView.setAdapter(adapter);
@@ -81,9 +96,17 @@ public class LangListActivity extends AppCompatActivity {
                 Log.i("APP", "INSERT");
                 if(db.insertLang(lang)) {
                     langs.add(new LangListItem(lang, 0, v -> {
-                        Intent intent = new Intent(this, SubjectListActivity.class);
-                        intent.putExtra("lang", lang);
-                        startActivity(intent);
+                        Intent toSub = new Intent(this, SubjectListActivity.class);
+                        switch(mode) {
+                            case TEACHER_MODE:
+                                toSub.putExtra("mode", 0);
+                                break;
+                            case STUDENT_MODE:
+                                toSub.putExtra("mode", 1);
+                                break;
+                        }
+                        toSub.putExtra("lang", lang);
+                        startActivity(toSub);
                     }, v -> {
                         for (int i = 0; i < langs.size(); i++) {
                             LangListItem it = langs.get(i);
@@ -107,10 +130,19 @@ public class LangListActivity extends AppCompatActivity {
             }
         });
 
-        addButton.setOnClickListener(v -> {
-            AddLangDialogFragment dialog = new AddLangDialogFragment(langLiveData);
-            dialog.show(getSupportFragmentManager(), "dialog_add_lang");
-        });
+        addButton = findViewById(R.id.add_lang_button);
+        switch (mode) {
+            case TEACHER_MODE:
+                addButton.setOnClickListener(v -> {
+                    AddLangDialogFragment dialog = new AddLangDialogFragment(langLiveData);
+                    dialog.show(getSupportFragmentManager(), "dialog_add_lang");
+                });
+                addButton.setVisibility(View.VISIBLE);
+                break;
+            case STUDENT_MODE:
+                addButton.setVisibility(View.GONE);
+                break;
+        }
     }
 
     @Override

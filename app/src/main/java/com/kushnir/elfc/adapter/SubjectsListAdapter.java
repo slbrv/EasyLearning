@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.kushnir.elfc.R;
+import com.kushnir.elfc.activity.ActivityMode;
 import com.kushnir.elfc.adapter.item.SubjectListItem;
 
 import java.util.List;
@@ -21,11 +22,15 @@ public class SubjectsListAdapter extends RecyclerView.Adapter<SubjectsListAdapte
     private final LayoutInflater inflater;
     private final List<SubjectListItem> subjects;
     private final String cardsCountText;
+    private final ActivityMode mode;
 
-    public SubjectsListAdapter(Context context, List<SubjectListItem> subjects) {
+    public SubjectsListAdapter(Context context,
+                               List<SubjectListItem> subjects,
+                               ActivityMode mode) {
         this.inflater = LayoutInflater.from(context);
         this.subjects = subjects;
         this.cardsCountText = context.getResources().getString(R.string.cards_count);
+        this.mode = mode;
     }
 
     @NonNull
@@ -41,7 +46,15 @@ public class SubjectsListAdapter extends RecyclerView.Adapter<SubjectsListAdapte
         SubjectListItem item = subjects.get(position);
         holder.subjectName.setText(item.getSubjectName());
         holder.cardsCountText.setText(cardsCountText + ": " + item.getCardsCount());
-        holder.delButton.setOnClickListener(item.getDelListener());
+        switch (mode) {
+            case TEACHER_MODE:
+                holder.delButton.setOnClickListener(item.getDelListener());
+                holder.delButton.setVisibility(View.VISIBLE);
+                break;
+            case STUDENT_MODE:
+                holder.delButton.setVisibility(View.GONE);
+                break;
+        }
         holder.layout.setOnClickListener(item.getClickListener());
     }
 

@@ -1,13 +1,17 @@
 package com.kushnir.elfc.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -15,9 +19,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.kushnir.elfc.R;
 import com.kushnir.elfc.adapter.SubjectsListAdapter;
+import com.kushnir.elfc.adapter.item.SubjectListItem;
 import com.kushnir.elfc.data.CardsRepository;
 import com.kushnir.elfc.fragment.AddSubjectDialogFragment;
-import com.kushnir.elfc.adapter.item.SubjectListItem;
 
 import java.util.ArrayList;
 
@@ -29,6 +33,8 @@ public class SubjectListActivity extends AppCompatActivity {
 
     private SubjectsListAdapter adapter;
 
+    private ActivityMode mode;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,6 +42,9 @@ public class SubjectListActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         String lang = intent.getStringExtra("lang");
+        mode = intent.getIntExtra("mode", -1) == 0 ?
+                ActivityMode.TEACHER_MODE :
+                ActivityMode.STUDENT_MODE;
 
         ActionBar bar = getSupportActionBar();
         bar.setTitle(lang);
@@ -49,10 +58,17 @@ public class SubjectListActivity extends AppCompatActivity {
             SubjectListItem item = new SubjectListItem(subject,
                     lang,
                     db.getCardCount(lang, subject), v -> {
-                Intent toCardsIntent = new Intent(this, CardListActivity.class);
-                toCardsIntent.putExtra("lang", lang);
-                toCardsIntent.putExtra("subject", subject);
-                startActivity(toCardsIntent);
+                switch (mode) {
+                    case TEACHER_MODE:
+                        Intent toCardsIntent = new Intent(this, CardListActivity.class);
+                        toCardsIntent.putExtra("lang", lang);
+                        toCardsIntent.putExtra("subject", subject);
+                        startActivity(toCardsIntent);
+                        break;
+                    case STUDENT_MODE:
+                        onSelectMode(lang, subject);
+                        break;
+                }
             }, v -> {
                 for (int i = 0; i < subjects.size(); i++) {
                     SubjectListItem it = subjects.get(i);
@@ -81,10 +97,18 @@ public class SubjectListActivity extends AppCompatActivity {
                 if(db.insertSubject(lang, subject)) {
                     subjects.add(new SubjectListItem(subject, lang,0, v -> {
                         Log.i("App", "Subject: " + subject);
-                        Intent toCardsIntent = new Intent(this, CardListActivity.class);
-                        toCardsIntent.putExtra("lang", lang);
-                        toCardsIntent.putExtra("subject", subject);
-                        startActivity(toCardsIntent);
+                        switch (mode) {
+                            case TEACHER_MODE:
+                                Intent toCardsIntent = new Intent(this, CardListActivity.class);
+                                toCardsIntent.putExtra("lang", lang);
+                                toCardsIntent.putExtra("subject", subject);
+                                toCardsIntent.putExtra("mode", 0);
+                                startActivity(toCardsIntent);
+                                break;
+                            case STUDENT_MODE:
+                                onSelectMode(lang, subject);
+                                break;
+                        }
                     }, v -> {
                         for (int i = 0; i < subjects.size(); i++) {
                             SubjectListItem it = subjects.get(i);
@@ -109,12 +133,20 @@ public class SubjectListActivity extends AppCompatActivity {
         });
 
         addButton = findViewById(R.id.add_subject_button);
-        addButton.setOnClickListener(v -> {
-            AddSubjectDialogFragment dialog = new AddSubjectDialogFragment(subjectLiveData);
-            dialog.show(getSupportFragmentManager(), "dialog_add_subject");
-        });
+        switch (mode) {
+            case TEACHER_MODE:
+                addButton.setOnClickListener(v -> {
+                    AddSubjectDialogFragment dialog = new AddSubjectDialogFragment(subjectLiveData);
+                    dialog.show(getSupportFragmentManager(), "dialog_add_subject");
+                });
+                addButton.setVisibility(View.VISIBLE);
+                break;
+            case STUDENT_MODE:
+                addButton.setVisibility(View.GONE);
+                break;
+        }
 
-        adapter = new SubjectsListAdapter(this, subjects);
+        adapter = new SubjectsListAdapter(this, subjects, mode);
 
         recyclerView = findViewById(R.id.subjects_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -141,5 +173,34 @@ public class SubjectListActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public void onSelectMode(String lang, String subject) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        Resources res = getResources();
+        builder.setTitle(res.getString(R.string.mode));
+
+        String[] mods = {res.getString(R.string.learning),
+                         res.getString(R.string.word_mode),
+                         res.getString(R.string.image_mode)};
+        builder.setItems(mods, (dialog, which) -> {
+            switch (which) {
+                case 0:
+                    // Learning mode
+                    Log.i("APP", "To learning mode: lang(" + lang + ") subject(" + subject + ")");
+                    break;
+                case 1:
+                    // Word mode
+                    Log.i("APP", "To word mode: lang(" + lang + ") subject(" + subject + ")");
+                    break;
+                case 2:
+                    // Image mode
+                    Log.i("APP", "To image mode: lang(" + lang + ") subject(" + subject + ")");
+                    break;
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 }

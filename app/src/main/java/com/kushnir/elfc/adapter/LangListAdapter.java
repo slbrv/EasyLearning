@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.kushnir.elfc.R;
+import com.kushnir.elfc.activity.ActivityMode;
 import com.kushnir.elfc.adapter.item.LangListItem;
 
 import java.util.List;
@@ -21,11 +22,13 @@ public class LangListAdapter extends RecyclerView.Adapter<LangListAdapter.ViewHo
     private final LayoutInflater inflater;
     private final List<LangListItem> langs;
     private final String subjectsCountText;
+    private final ActivityMode mode;
 
-    public LangListAdapter(Context context, List<LangListItem> langs) {
+    public LangListAdapter(Context context, List<LangListItem> langs, ActivityMode mode) {
         this.inflater = LayoutInflater.from(context);
         this.langs = langs;
         this.subjectsCountText = context.getResources().getString(R.string.subjects_count);
+        this.mode = mode;
     }
 
     @NonNull
@@ -41,7 +44,15 @@ public class LangListAdapter extends RecyclerView.Adapter<LangListAdapter.ViewHo
         LangListItem item = langs.get(position);
         holder.langText.setText(item.getLangName());
         holder.subjectsCountText.setText(subjectsCountText + ": " + item.getSubjectsCount());
-        holder.delButton.setOnClickListener(item.getDelListener());
+        switch (mode) {
+            case TEACHER_MODE:
+                holder.delButton.setOnClickListener(item.getDelListener());
+                holder.delButton.setVisibility(View.VISIBLE);
+                break;
+            case STUDENT_MODE:
+                holder.delButton.setVisibility(View.GONE);
+                break;
+        }
         holder.layout.setOnClickListener(item.getClickListener());
     }
 

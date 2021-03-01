@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.kushnir.elfc.R;
+import com.kushnir.elfc.adapter.item.LangListItem;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,10 +30,13 @@ public class MainActivity extends AppCompatActivity {
 
     protected void toTeacherMode(View v) {
         Intent intent = new Intent(this, LangListActivity.class);
+        intent.putExtra("mode", 0);
         startActivity(intent);
     }
 
     protected void toLearningMode(View v) {
-        Log.i("ELFC", "TO LEARNING MODE");
+        Intent intent = new Intent(this, LangListActivity.class);
+        intent.putExtra("mode", 1);
+        startActivity(intent);
     }
 }

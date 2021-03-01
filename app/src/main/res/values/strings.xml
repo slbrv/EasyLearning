@@ -27,4 +27,8 @@
     <string name="lang_has_already_been_added">The language has already been added</string>
     <string name="subject_has_already_been_added">The subject has already been added</string>
     <string name="word_has_already_been_added">The word has already been added</string>
+    <string name="mode">Select mode</string>
+    <string name="learning">Learning mode</string>
+    <string name="word_mode">Word mode</string>
+    <string name="image_mode">Image mode</string>
 </resources>

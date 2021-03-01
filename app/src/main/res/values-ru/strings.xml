@@ -27,4 +27,8 @@
     <string name="lang_has_already_been_added">Язык уже добавлен</string>
     <string name="subject_has_already_been_added">Тема уже добавлена</string>
     <string name="word_has_already_been_added">Слово уже добавлено</string>
+    <string name="mode">Режим</string>
+    <string name="learning">Изучение</string>
+    <string name="word_mode">Тестирование по словам</string>
+    <string name="image_mode">Тестирование по картинкам</string>
 </resources>
