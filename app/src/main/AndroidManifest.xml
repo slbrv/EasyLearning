@@ -11,7 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.EasyLearning">
-        <activity android:name=".activity.TestingImageActivity"></activity>
+        <activity android:name=".activity.TestingImagesActivity"></activity>
         <activity android:name=".activity.TestingWordsActivity" />
         <activity android:name=".activity.LearningActivity" />
         <activity android:name=".activity.LangListActivity" />

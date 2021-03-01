@@ -1,6 +1,5 @@
 package com.kushnir.elfc.activity;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -207,7 +206,7 @@ public class SubjectListActivity extends AppCompatActivity {
                     break;
                 case 2: // Image mode
                     Log.i("APP", "To image mode: lang(" + lang + ") subject(" + subject + ")");
-                    Intent imageIntent = new Intent(this, TestingImageActivity.class);
+                    Intent imageIntent = new Intent(this, TestingImagesActivity.class);
                     imageIntent.putExtra("lang", lang);
                     imageIntent.putExtra("subject", subject);
                     startActivity(imageIntent);
