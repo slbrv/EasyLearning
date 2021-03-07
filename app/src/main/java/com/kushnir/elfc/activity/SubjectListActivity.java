@@ -53,16 +53,12 @@ public class SubjectListActivity extends AppCompatActivity {
 
         ArrayList<String> subjectStrings = db.getSubjects(lang);
         subjects = new ArrayList<>();
-        for(String subject : subjectStrings) {
-            int cardCount = db.getCardCount(lang, subject);
-
-            // There must be at least 3 cards to display in the testing activity!
-            if(mode == ActivityMode.STUDENT_MODE && cardCount < 3)
-                continue;
+        for (String subject : subjectStrings) {
+            int cardsCount = db.getCardsCount(lang, subject);
 
             SubjectListItem item = new SubjectListItem(subject,
                     lang,
-                    cardCount, v -> {
+                    cardsCount, v -> {
                 switch (mode) {
                     case TEACHER_MODE:
                         Intent toCardsIntent = new Intent(this, CardListActivity.class);
@@ -71,13 +67,13 @@ public class SubjectListActivity extends AppCompatActivity {
                         startActivity(toCardsIntent);
                         break;
                     case STUDENT_MODE:
-                        onSelectMode(lang, subject);
+                        onSelectMode(lang, subject, cardsCount);
                         break;
                 }
             }, v -> {
                 for (int i = 0; i < subjects.size(); i++) {
                     SubjectListItem it = subjects.get(i);
-                    if(it.getSubjectName().equals(subject)) {
+                    if (it.getSubjectName().equals(subject)) {
                         CardsRepository repo = new CardsRepository(this);
                         repo.delSubject(lang, subject);
                         repo.close();
@@ -99,8 +95,11 @@ public class SubjectListActivity extends AppCompatActivity {
                         getResources().getText(R.string.empty_subject_input_toast),
                         Toast.LENGTH_LONG).show();
             } else {
-                if(db.insertSubject(lang, subject)) {
-                    subjects.add(new SubjectListItem(subject, lang,0, v -> {
+                if (db.insertSubject(lang, subject)) {
+                    
+                    int cardsCount = db.getCardsCount(lang, subject);
+                    
+                    subjects.add(new SubjectListItem(subject, lang, 0, v -> {
                         Log.i("App", "Subject: " + subject);
                         switch (mode) {
                             case TEACHER_MODE:
@@ -111,13 +110,13 @@ public class SubjectListActivity extends AppCompatActivity {
                                 startActivity(toCardsIntent);
                                 break;
                             case STUDENT_MODE:
-                                onSelectMode(lang, subject);
+                                onSelectMode(lang, subject, cardsCount);
                                 break;
                         }
                     }, v -> {
                         for (int i = 0; i < subjects.size(); i++) {
                             SubjectListItem it = subjects.get(i);
-                            if(it.getSubjectName().equals(subject)) {
+                            if (it.getSubjectName().equals(subject)) {
                                 CardsRepository repo = new CardsRepository(this);
                                 repo.delSubject(lang, subject);
                                 repo.close();
@@ -162,8 +161,8 @@ public class SubjectListActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         CardsRepository repo = new CardsRepository(this);
-        for(SubjectListItem item : subjects) {
-            item.setCardsCount(repo.getCardCount(item.getLang(), item.getSubjectName()));
+        for (SubjectListItem item : subjects) {
+            item.setCardsCount(repo.getCardsCount(item.getLang(), item.getSubjectName()));
         }
         adapter.notifyDataSetChanged();
         repo.close();
@@ -180,36 +179,60 @@ public class SubjectListActivity extends AppCompatActivity {
         }
     }
 
-    public void onSelectMode(String lang, String subject) {
+    public void onSelectMode(String lang, String subject, int cardsCount) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         Resources res = getResources();
         builder.setTitle(res.getString(R.string.mode));
 
         String[] mods = {res.getString(R.string.learning),
-                         res.getString(R.string.word_mode),
-                         res.getString(R.string.image_mode)};
+                res.getString(R.string.word_mode),
+                res.getString(R.string.image_mode)};
         builder.setItems(mods, (dialog, which) -> {
             switch (which) {
                 case 0: // Learning mode
-                    Log.i("APP", "To learning mode: lang(" + lang + ") subject(" + subject + ")");
-                    Intent learningIntent = new Intent(this, LearningActivity.class);
-                    learningIntent.putExtra("lang", lang);
-                    learningIntent.putExtra("subject", subject);
-                    startActivity(learningIntent);
+                    if(cardsCount >= 1) {
+                        Log.i("APP", "To learning mode: lang(" + lang + ") subject(" + subject + ")");
+                        Intent learningIntent = new Intent(this, LearningActivity.class);
+                        learningIntent.putExtra("lang", lang);
+                        learningIntent.putExtra("subject", subject);
+                        startActivity(learningIntent);
+                    }
+                    else {
+                        Toast.makeText(
+                                this,
+                                R.string.the_subject_must_include_1,
+                                Toast.LENGTH_LONG).show();
+                    }
                     break;
                 case 1: // Word mode
-                    Log.i("APP", "To word mode: lang(" + lang + ") subject(" + subject + ")");
-                    Intent wordIntent = new Intent(this, TestingWordsActivity.class);
-                    wordIntent.putExtra("lang", lang);
-                    wordIntent.putExtra("subject", subject);
-                    startActivity(wordIntent);
+                    if(cardsCount >= 3) {
+                        Log.i("APP", "To word mode: lang(" + lang + ") subject(" + subject + ")");
+                        Intent wordIntent = new Intent(this, TestingWordsActivity.class);
+                        wordIntent.putExtra("lang", lang);
+                        wordIntent.putExtra("subject", subject);
+                        startActivity(wordIntent);
+                    }
+                    else {
+                        Toast.makeText(
+                                this,
+                                R.string.the_subject_must_include_3,
+                                Toast.LENGTH_LONG).show();
+                    }
                     break;
                 case 2: // Image mode
+                    if(cardsCount >= 3) {
                     Log.i("APP", "To image mode: lang(" + lang + ") subject(" + subject + ")");
                     Intent imageIntent = new Intent(this, TestingImagesActivity.class);
                     imageIntent.putExtra("lang", lang);
                     imageIntent.putExtra("subject", subject);
                     startActivity(imageIntent);
+                    }
+                    else {
+                        Toast.makeText(
+                                this,
+                                R.string.the_subject_must_include_3,
+                                Toast.LENGTH_LONG).show();
+                    }
                     break;
             }
         });

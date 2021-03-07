@@ -124,8 +124,8 @@ public class CardsRepository extends SQLiteOpenHelper {
         return count;
     }
 
-    public int getCardCount(String lang,
-                            String subject) {
+    public int getCardsCount(String lang,
+                             String subject) {
         int id = getSubjectId(lang, subject);
 
         SQLiteDatabase db = getReadableDatabase();

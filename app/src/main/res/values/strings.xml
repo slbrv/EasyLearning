@@ -42,4 +42,6 @@
     <string name="test_completed">Test completed</string>
     <string name="number_of_cards">Number of cards</string>
     <string name="correct_answers">Correct answers</string>
+    <string name="the_subject_must_include_3">The subject must include at least 3 cards in order to start the test</string>
+    <string name="the_subject_must_include_1">The subject must include at least 1 card in order to start the learning</string>
 </resources>

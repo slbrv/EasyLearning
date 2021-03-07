@@ -41,4 +41,6 @@
     <string name="test_completed">Тест выполнен</string>
     <string name="number_of_cards">Количество карточек</string>
     <string name="correct_answers">Правильных ответов</string>
+    <string name="the_subject_must_include_3">Тема должна содержать не менее 3 карточек для того, чтобы начать тест</string>
+    <string name="the_subject_must_include_1">Тема должна содержать не менее 1 карточки для того, чтобы начать повторение</string>
 </resources>
